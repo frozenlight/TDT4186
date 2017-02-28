@@ -32,14 +32,6 @@ public class Doorman implements Runnable {
 					queue.add(new Customer());
 					gui.println("Doorman added customer");
 					queue.notify();
-				} else {
-					gui.println("Doorman is resting");
-					try {
-						queue.wait();
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 				}
 			}
 			int idleTime = Globals.doormanSleep;

@@ -35,13 +35,14 @@ public class Barber implements Runnable {
 				if (!queue.isEmpty()) {
 					customer = queue.next();
 				} else {
-					gui.println(String.format("Barber %s is waiting", pos));
+					gui.println(String.format("Barber %s is waiting for a customer", pos));
 					try {
 						queue.wait();
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					gui.println(String.format("Barber %s is notified of a customer", pos));
 				}
 			}
 			if (customer != null) {
