@@ -11,6 +11,7 @@ public class Cpu {
     private LinkedList<Process> cpuQueue;
     private long maxCpuTime;
     private Statistics statistics;
+    private Process activeProcess = null;
 
     /**
      * Creates a new CPU with the given parameters.
@@ -22,7 +23,6 @@ public class Cpu {
         this.cpuQueue = cpuQueue;
         this.maxCpuTime = maxCpuTime;
         this.statistics = statistics;
-        // Incomplete
     }
 
     /**
@@ -36,7 +36,10 @@ public class Cpu {
     public Event insertProcess(Process p, long clock) {
         //if cpu == "idle", this.switchProcess(clock)
         cpuQueue.add(p);
-        return null;
+        if (activeProcess == null) {
+            activeProcess = cpuQueue.getFirst();
+        }
+        return new Event(1,clock);
     }
 
     /**
@@ -48,8 +51,13 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event switchProcess(long clock) {
-        // Incomplete
-        return null;
+        if (activeProcess != null) {
+            cpuQueue.add(activeProcess);
+        }
+        if (!cpuQueue.isEmpty()) {
+            activeProcess = cpuQueue.getFirst();
+        }
+        return new Event(3,clock);
     }
 
     /**
@@ -59,8 +67,8 @@ public class Cpu {
      *			process was switched in.
      */
     public Event activeProcessLeft(long clock) {
-        // Incomplete
-        return null;
+        this.switchProcess(clock);
+        return new Event(4,clock);
     }
 
     /**
@@ -77,6 +85,10 @@ public class Cpu {
      */
     public void timePassed(long timePassed) {
         // Incomplete
+    }
+
+    public void killActiveProcess() {
+        cpuQueue.remove(this.getActiveProcess());
     }
 
 }

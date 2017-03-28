@@ -102,10 +102,4 @@ public class Process {
 	}
 
 	// Add more methods as needed
-
-	// TODO: add method to kill process
-
-	public void kill() {
-		//incomplete
-	}
 }
