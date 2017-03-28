@@ -68,8 +68,10 @@ public class Io {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-        // Incomplete
-        //update time waiting in IO and spent in IO
+        statistics.ioQueueLengthTime += ioQueue.size()*timePassed;
+        if (ioQueue.size() > statistics.ioQueueLargestLength) {
+            statistics.ioQueueLargestLength = ioQueue.size();
+        }
     }
 
     /**

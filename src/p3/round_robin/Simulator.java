@@ -166,6 +166,7 @@ public class Simulator
             transferProcessFromMemToReady();
             // Update statistics
             p.updateStatistics(statistics);
+            statistics.totalNofTimesInReadyQueue ++;
 
             // Check for more free memory
             p =	 memory.checkMemory(clock);
@@ -178,17 +179,17 @@ public class Simulator
     private void switchProcess() {
         System.out.println("Switching process");
         eventQueue.insertEvent(cpu.switchProcess(clock));
-        // Incomplete
+        statistics.nofProcessSwitches ++;
     }
 
     /**
      * Ends the active process, and deallocates any resources allocated to it.
      */
     private void endProcess() {
-        System.out.println("Ending process " + cpu.getActiveProcess().getProcessId());
         memory.processCompleted(cpu.getActiveProcess());
+        cpu.getActiveProcess().updateStatistics(statistics);
         eventQueue.insertEvent(cpu.activeProcessLeft(clock));
-        // Incomplete
+        statistics.nofCompletedProcesses ++;
     }
 
     /**
@@ -199,7 +200,7 @@ public class Simulator
         System.out.println("Processing IO request from " + cpu.getActiveProcess().getProcessId());
         eventQueue.insertEvent(io.addIoRequest(cpu.getActiveProcess(),clock));
         eventQueue.insertEvent(cpu.activeProcessLeft(clock));
-        // Incomplete
+        statistics.totalNofTimesInIoQueue ++;
     }
 
     /**
@@ -213,7 +214,8 @@ public class Simulator
             eventQueue.insertEvent(cpu.insertProcess(activeP, clock));
         }
         eventQueue.insertEvent(io.startIoOperation(clock));
-        // Incomplete
+        statistics.nofProcessedIoOperations ++;
+        statistics.totalNofTimesInReadyQueue ++;
     }
 
 

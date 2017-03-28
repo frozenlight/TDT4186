@@ -89,14 +89,11 @@ public class Process {
 
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
 		statistics.totalTimeSpentInReadyQueue += timeSpentInReadyQueue;
-		statistics.totalTimeSpentInCpu += timeSpentInCpu;
 		statistics.totalTimeSpentWaitingForIo += timeSpentWaitingForIo;
 		statistics.totalTimeSpentInIo += timeSpentInIo;
 
 		statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
 		statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
-
-		statistics.nofCompletedProcesses++;
 	}
 
 	public long getProcessId() {

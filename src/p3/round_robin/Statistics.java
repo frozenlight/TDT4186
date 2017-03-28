@@ -63,7 +63,7 @@ public class Statistics
 		System.out.println("Number of processed I/O operations:                           "+nofProcessedIoOperations);
 		System.out.println("Average throughput (processes per second):                    "+(nofCompletedProcesses*1000.0f)/simulationLength);
 		System.out.println();
-		System.out.println("Total CPU time spent processing:                              "+totalBusyCpuTime+" ms");
+		System.out.println("Total CPU time spent processing:                              "+totalTimeSpentInCpu+" ms");
 		System.out.println("Fraction of CPU time spent processing:                        "+totalBusyCpuTime*100.0f/simulationLength+"%");
 		System.out.println("Total CPU time spent waiting:                                 "+(simulationLength-totalBusyCpuTime)+" ms");
 		System.out.println("Fraction of CPU time spent waiting:                           "+((simulationLength-totalBusyCpuTime)*100.0f/simulationLength)+"%");

@@ -102,11 +102,9 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-        // Incomplete
-        //update active process clock
-        //remove timePassed from active process
-        if(activeProcess != null){
-            activeProcess.updateStatistics(statistics);
+        statistics.cpuQueueLengthTime += cpuQueue.size()*timePassed;
+        if (cpuQueue.size() > statistics.cpuQueueLargestLength) {
+            statistics.cpuQueueLargestLength = cpuQueue.size();
         }
     }
 
@@ -117,17 +115,18 @@ public class Cpu {
         long timeToIo = activeProcess.getTimeToNextIoOperation();
 
         //compare all the times to next events and take the shortest
-        if(timeToIo < runTime){
-            //run until IO
-            runTime = timeToIo;
-            eventType = Event.IO_REQUEST;
-        }
         if(remainingTime < runTime){
             //run for remaining time
             runTime = remainingTime;
             eventType = Event.END_PROCESS;
+        }else if(timeToIo < runTime) {
+            //run until IO
+            runTime = timeToIo;
+            eventType = Event.IO_REQUEST;
         }
 
+        statistics.totalTimeSpentInCpu += runTime;
+        statistics.totalBusyCpuTime += runTime;
         activeProcess.activate(runTime);
         return new Event(eventType, clock + runTime);
     }
