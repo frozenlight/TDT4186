@@ -1,3 +1,5 @@
+package p2;
+
 /**
  * Class containing three globally available variables modified by the GUI
  * and used by the Barber and Doorman threads.

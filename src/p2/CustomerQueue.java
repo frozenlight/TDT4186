@@ -1,3 +1,5 @@
+package p2;
+
 import java.util.*;
 /**
  * This class implements a queue of customers as a circular buffer.

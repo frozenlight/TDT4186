@@ -34,6 +34,7 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event insertProcess(Process p, long clock) {
+        //if cpu == "idle", this.switchProcess(clock)
         cpuQueue.add(p);
         return null;
     }
@@ -67,8 +68,7 @@ public class Cpu {
      * @return	The process currently using the CPU.
      */
     public Process getActiveProcess() {
-        // Incomplete
-        return null;
+        return cpuQueue.getFirst();
     }
 
     /**

@@ -154,9 +154,11 @@ public class Simulator
 		Process p = memory.checkMemory(clock);
 		// As long as there is enough memory, processes are moved from the memory queue to the cpu queue
 		while(p != null) {
-			
-			// TODO: Add this process to the CPU queue!
-			// Also add new events to the event queue if needed
+
+            // Add this process to the CPU queue
+            cpu.insertProcess(p, clock);
+
+			// TODO: Also add new events to the event queue if needed
 
 			// Since we haven't implemented the CPU and I/O device yet,
 			// we let the process leave the system immediately, for now.
@@ -175,13 +177,17 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// Incomplete
+	    cpu.switchProcess(clock);
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
+
+	    Process p = cpu.getActiveProcess();
+
+
 		// Incomplete
 	}
 
@@ -190,7 +196,9 @@ public class Simulator
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// Incomplete
+		Process p = cpu.getActiveProcess();
+		io.addIoRequest(p, clock);
+		cpu.activeProcessLeft(clock);
 	}
 
 	/**
@@ -198,7 +206,7 @@ public class Simulator
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// Incomplete
+		io.removeActiveProcess();
 	}
 
 
