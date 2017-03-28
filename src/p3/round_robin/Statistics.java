@@ -48,7 +48,7 @@ public class Statistics
 	public long nofProcessSwitches = 0;
 	/** The total number of I/O operations that have been performed */
 	public long nofProcessedIoOperations = 0;
-    
+
 	/**
 	 * Prints out a report summarizing all collected data about the simulation.
 	 * @param simulationLength	The number of milliseconds that the simulation covered.

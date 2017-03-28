@@ -15,7 +15,16 @@ public class Io {
      * @param avgIoTime		The average duration of an I/O operation.
      * @param statistics	A reference to the statistics collector.
      */
+
+    private LinkedList<Process> ioQueue;
+    private long avgIoTime;
+    private Statistics statistics;
+
     public Io(LinkedList<Process> ioQueue, long avgIoTime, Statistics statistics) {
+        this.ioQueue = ioQueue;
+        this.avgIoTime = avgIoTime;
+        this.statistics = statistics;
+
         // Incomplete
     }
 
@@ -29,7 +38,9 @@ public class Io {
      */
     public Event addIoRequest(Process requestingProcess, long clock) {
         // Incomplete
-        return null;
+        ioQueue.addLast(requestingProcess);
+        //startIoOperation initiates IO if the device is free, returns null if not
+        return startIoOperation(clock);
     }
 
     /**
@@ -41,6 +52,14 @@ public class Io {
      */
     public Event startIoOperation(long clock) {
         // Incomplete
+        if(activeProcess == null && !ioQueue.isEmpty()){
+            activeProcess = ioQueue.removeFirst();
+            activeProcess.resetIoTime();
+            System.out.println("Process " + activeProcess.getProcessId() + " is in IO");
+            //activeProcess.updateStatistics(statistics);
+            //return new event using random time within avgIoTime
+            return new Event(Event.END_IO, (long)(clock + Math.random()*avgIoTime));
+        }
         return null;
     }
 
@@ -50,6 +69,7 @@ public class Io {
      */
     public void timePassed(long timePassed) {
         // Incomplete
+        //update time waiting in IO and spent in IO
     }
 
     /**
@@ -57,8 +77,9 @@ public class Io {
      * @return	The process that was doing I/O, or null if no process was doing I/O.
      */
     public Process removeActiveProcess() {
-        // Incomplete
-        return null;
+        Process active = activeProcess;
+        activeProcess = null;
+        return active;
     }
 
     public Process getActiveProcess() {

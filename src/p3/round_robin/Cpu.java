@@ -7,22 +7,24 @@ import java.util.LinkedList;
  * the CPU unit of the simulated system.
  */
 public class Cpu {
-
-    private LinkedList<Process> cpuQueue;
-    private long maxCpuTime;
-    private Statistics statistics;
-    private Process activeProcess = null;
-
     /**
      * Creates a new CPU with the given parameters.
      * @param cpuQueue		The CPU queue to be used.
      * @param maxCpuTime	The Round Robin time quant to be used.
      * @param statistics	A reference to the statistics collector.
      */
+
+    private LinkedList<Process> cpuQueue;
+    private long maxCpuTime;
+    private Statistics statistics;
+    private Process activeProcess = null;
+
     public Cpu(LinkedList<Process> cpuQueue, long maxCpuTime, Statistics statistics) {
         this.cpuQueue = cpuQueue;
         this.maxCpuTime = maxCpuTime;
         this.statistics = statistics;
+
+        // Incomplete
     }
 
     /**
@@ -34,12 +36,14 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event insertProcess(Process p, long clock) {
-        //if cpu == "idle", this.switchProcess(clock)
-        cpuQueue.add(p);
-        if (activeProcess == null) {
-            activeProcess = cpuQueue.getFirst();
+        cpuQueue.addLast(p);
+        //System.out.println("Added " + p.getProcessId() + " to CPU queue");
+        //if CPU is idle
+        if(activeProcess == null){
+            //System.out.println("CPU is idle, so we activate " + p.toString());
+            return switchProcess(clock);
         }
-        return new Event(Event.NEW_PROCESS,clock);
+        return null;
     }
 
     /**
@@ -51,13 +55,26 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event switchProcess(long clock) {
-        if (activeProcess != null) {
-            cpuQueue.add(activeProcess);
+        Event event;
+
+        if(!cpuQueue.isEmpty()){
+            activeProcess = cpuQueue.removeFirst();
+            System.out.println(activeProcess.getProcessId() + " is in CPU " + activeProcess.getCpuTimeNeededLeft() +
+                    " " + activeProcess.getTimeToNextIoOperation());
+            event = getNextEvent(clock);
+        }else{
+            activeProcess = null;
+            return null;
         }
-        if (!cpuQueue.isEmpty()) {
-            activeProcess = cpuQueue.getFirst();
+
+        //place the previously active process in the queue if it isn't done
+        if((event.getType() == Event.SWITCH_PROCESS)){
+            cpuQueue.addLast(activeProcess);
         }
-        return new Event(Event.SWITCH_PROCESS,clock);
+        activeProcess.updateStatistics(statistics);
+        return event;
+
+        // Incomplete
     }
 
     /**
@@ -67,8 +84,9 @@ public class Cpu {
      *			process was switched in.
      */
     public Event activeProcessLeft(long clock) {
-        this.switchProcess(clock);
-        return new Event(Event.IO_REQUEST,clock);
+        //incomplete
+        activeProcess = null;
+        return switchProcess(clock);
     }
 
     /**
@@ -76,7 +94,7 @@ public class Cpu {
      * @return	The process currently using the CPU.
      */
     public Process getActiveProcess() {
-        return cpuQueue.getFirst();
+        return activeProcess;
     }
 
     /**
@@ -84,12 +102,34 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-
         // Incomplete
+        //update active process clock
+        //remove timePassed from active process
+        if(activeProcess != null){
+            activeProcess.updateStatistics(statistics);
+        }
     }
 
-    public void killActiveProcess() {
-        cpuQueue.remove(this.getActiveProcess());
+    private Event getNextEvent(long clock){
+        int eventType = Event.SWITCH_PROCESS;
+        long runTime = maxCpuTime;
+        long remainingTime = activeProcess.getCpuTimeNeededLeft();
+        long timeToIo = activeProcess.getTimeToNextIoOperation();
+
+        //compare all the times to next events and take the shortest
+        if(timeToIo < runTime){
+            //run until IO
+            runTime = timeToIo;
+            eventType = Event.IO_REQUEST;
+        }
+        if(remainingTime < runTime){
+            //run for remaining time
+            runTime = remainingTime;
+            eventType = Event.END_PROCESS;
+        }
+
+        activeProcess.activate(runTime);
+        return new Event(eventType, clock + runTime);
     }
 
 }

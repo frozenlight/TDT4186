@@ -13,22 +13,22 @@ public class Process {
 	/** The ID of this process */
 	private long processId;
 	/** The amount of memory needed by this process */
-    private long memoryNeeded;
+	private long memoryNeeded;
 	/** The amount of cpu time still needed by this process */
-    private long cpuTimeNeeded;
+	private long cpuTimeNeeded;
 	/** The average time between the need for I/O operations for this process */
-    private long avgIoInterval;
+	private long avgIoInterval;
 	/** The time left until the next time this process needs I/O */
-    private long timeToNextIoOperation = 0;
+	private long timeToNextIoOperation = 0;
 
 	/** The time that this process has spent waiting in the memory queue */
 	private long timeSpentWaitingForMemory = 0;
 	/** The time that this process has spent waiting in the CPU queue */
 	private long timeSpentInReadyQueue = 0;
 	/** The time that this process has spent processing */
-    private long timeSpentInCpu = 0;
+	private long timeSpentInCpu = 0;
 	/** The time that this process has spent waiting in the I/O queue */
-    private long timeSpentWaitingForIo = 0;
+	private long timeSpentWaitingForIo = 0;
 	/** The time that this process has spent performing I/O */
 	private long timeSpentInIo = 0;
 
@@ -57,48 +57,81 @@ public class Process {
 		timeOfLastEvent = creationTime;
 		// Assign a process ID
 		processId = nextProcessId++;
+
+		resetIoTime();
 	}
 
 	/**
 	 * This method is called when the process leaves the memory queue (and
 	 * enters the cpu queue).
-     * @param clock The time when the process leaves the memory queue.
-     */
-    public void leftMemoryQueue(long clock) {
-		  timeSpentWaitingForMemory += clock - timeOfLastEvent;
-		  timeOfLastEvent = clock;
-    }
+	 * @param clock The time when the process leaves the memory queue.
+	 */
+	public void leftMemoryQueue(long clock) {
+		timeSpentWaitingForMemory += clock - timeOfLastEvent;
+		timeOfLastEvent = clock;
+	}
 
-    /**
+	/**
 	 * Returns the amount of memory needed by this process.
-     * @return	The amount of memory needed by this process.
-     */
+	 * @return	The amount of memory needed by this process.
+	 */
 	public long getMemoryNeeded() {
 		return memoryNeeded;
 	}
 
-    /**
+	/**
 	 * Updates the statistics collected by the given Statistic object, adding
 	 * data collected by this process. This method is called when the process
 	 * leaves the system.
-     * @param statistics	The Statistics object to be updated.
-     */
+	 * @param statistics	The Statistics object to be updated.
+	 */
 	public void updateStatistics(Statistics statistics) {
-		
+
 		statistics.totalTimeSpentWaitingForMemory += timeSpentWaitingForMemory;
-        statistics.totalTimeSpentInReadyQueue += timeSpentInReadyQueue;
-        statistics.totalTimeSpentInCpu += timeSpentInCpu;
-        statistics.totalTimeSpentWaitingForIo += timeSpentWaitingForIo;
-        statistics.totalTimeSpentInIo += timeSpentInIo;
+		statistics.totalTimeSpentInReadyQueue += timeSpentInReadyQueue;
+		statistics.totalTimeSpentInCpu += timeSpentInCpu;
+		statistics.totalTimeSpentWaitingForIo += timeSpentWaitingForIo;
+		statistics.totalTimeSpentInIo += timeSpentInIo;
 
-        statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
-        statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
+		statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
+		statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
 
-        statistics.nofCompletedProcesses++;
+		statistics.nofCompletedProcesses++;
 	}
 
 	public long getProcessId() {
 		return processId;
+	}
+
+	public long getCpuTimeNeeded(){
+		return cpuTimeNeeded;
+	}
+
+	public long getTimeSpentInCpu(){
+		return timeSpentInCpu;
+	}
+
+	public long getCpuTimeNeededLeft(){
+		return cpuTimeNeeded - timeSpentInCpu;
+	}
+
+	public long getTimeToNextIoOperation(){
+		return timeToNextIoOperation;
+	}
+
+	public void activate(long time){
+		timeSpentInCpu += time;
+		timeToNextIoOperation -= time;
+		System.out.println("Process " + processId + " ran for " + time);
+	}
+
+	public void resetIoTime(){
+		timeToNextIoOperation = (long)(Math.random()*avgIoInterval);
+	}
+
+
+	public void setTimeOfLastEvent(long time){
+		timeOfLastEvent = time;
 	}
 
 	// Add more methods as needed
