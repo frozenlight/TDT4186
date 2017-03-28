@@ -55,10 +55,8 @@ public class Io {
         if(activeProcess == null && !ioQueue.isEmpty()){
             activeProcess = ioQueue.removeFirst();
             activeProcess.resetIoTime();
-            System.out.println("Process " + activeProcess.getProcessId() + " is in IO");
-            //activeProcess.updateStatistics(statistics);
-            //return new event using random time within avgIoTime
-            return new Event(Event.END_IO, (long)(clock + Math.random()*avgIoTime));
+            activeProcess.addTimeSpentWaitIo(clock);
+            return new Event(Event.END_IO, (long)(clock + avgIoTime));
         }
         return null;
     }

@@ -177,9 +177,9 @@ public class Simulator
      * Simulates a process switch.
      */
     private void switchProcess() {
-        System.out.println("Switching process");
         eventQueue.insertEvent(cpu.switchProcess(clock));
         statistics.nofProcessSwitches ++;
+        cpu.getActiveProcess().addTimeSpentInRdyQue(clock);
     }
 
     /**
@@ -197,7 +197,6 @@ public class Simulator
      * perform an I/O operation.
      */
     private void processIoRequest() {
-        System.out.println("Processing IO request from " + cpu.getActiveProcess().getProcessId());
         eventQueue.insertEvent(io.addIoRequest(cpu.getActiveProcess(),clock));
         eventQueue.insertEvent(cpu.activeProcessLeft(clock));
         statistics.totalNofTimesInIoQueue ++;
@@ -208,7 +207,7 @@ public class Simulator
      * is done with its I/O operation.
      */
     private void endIoOperation() {
-        System.out.println("Ending IO process " + io.getActiveProcess().getProcessId());
+        io.getActiveProcess().addTimeSpentInIo(clock);
         Process activeP = io.removeActiveProcess();
         if(activeP.getCpuTimeNeededLeft() > 0){
             eventQueue.insertEvent(cpu.insertProcess(activeP, clock));

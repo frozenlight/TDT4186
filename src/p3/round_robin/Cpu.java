@@ -23,8 +23,6 @@ public class Cpu {
         this.cpuQueue = cpuQueue;
         this.maxCpuTime = maxCpuTime;
         this.statistics = statistics;
-
-        // Incomplete
     }
 
     /**
@@ -37,10 +35,7 @@ public class Cpu {
      */
     public Event insertProcess(Process p, long clock) {
         cpuQueue.addLast(p);
-        //System.out.println("Added " + p.getProcessId() + " to CPU queue");
-        //if CPU is idle
         if(activeProcess == null){
-            //System.out.println("CPU is idle, so we activate " + p.toString());
             return switchProcess(clock);
         }
         return null;
@@ -59,22 +54,17 @@ public class Cpu {
 
         if(!cpuQueue.isEmpty()){
             activeProcess = cpuQueue.removeFirst();
-            System.out.println(activeProcess.getProcessId() + " is in CPU " + activeProcess.getCpuTimeNeededLeft() +
-                    " " + activeProcess.getTimeToNextIoOperation());
             event = getNextEvent(clock);
         }else{
             activeProcess = null;
             return null;
         }
 
-        //place the previously active process in the queue if it isn't done
         if((event.getType() == Event.SWITCH_PROCESS)){
             cpuQueue.addLast(activeProcess);
         }
-        activeProcess.updateStatistics(statistics);
         return event;
 
-        // Incomplete
     }
 
     /**
@@ -84,7 +74,6 @@ public class Cpu {
      *			process was switched in.
      */
     public Event activeProcessLeft(long clock) {
-        //incomplete
         activeProcess = null;
         return switchProcess(clock);
     }
@@ -114,9 +103,7 @@ public class Cpu {
         long remainingTime = activeProcess.getCpuTimeNeededLeft();
         long timeToIo = activeProcess.getTimeToNextIoOperation();
 
-        //compare all the times to next events and take the shortest
         if(remainingTime < runTime){
-            //run for remaining time
             runTime = remainingTime;
             eventType = Event.END_PROCESS;
         }else if(timeToIo < runTime) {
@@ -125,8 +112,8 @@ public class Cpu {
             eventType = Event.IO_REQUEST;
         }
 
-        statistics.totalTimeSpentInCpu += runTime;
-        statistics.totalBusyCpuTime += runTime;
+        //statistics.totalTimeSpentInCpu += runTime;
+        //statistics.totalBusyCpuTime += runTime;
         activeProcess.activate(runTime);
         return new Event(eventType, clock + runTime);
     }

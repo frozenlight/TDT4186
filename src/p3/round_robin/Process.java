@@ -94,18 +94,12 @@ public class Process {
 
 		statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
 		statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
+        statistics.totalTimeSpentInCpu += timeSpentInCpu;
+        statistics.totalBusyCpuTime = statistics.totalTimeSpentInCpu;
 	}
 
 	public long getProcessId() {
 		return processId;
-	}
-
-	public long getCpuTimeNeeded(){
-		return cpuTimeNeeded;
-	}
-
-	public long getTimeSpentInCpu(){
-		return timeSpentInCpu;
 	}
 
 	public long getCpuTimeNeededLeft(){
@@ -119,17 +113,24 @@ public class Process {
 	public void activate(long time){
 		timeSpentInCpu += time;
 		timeToNextIoOperation -= time;
-		System.out.println("Process " + processId + " ran for " + time);
 	}
 
 	public void resetIoTime(){
 		timeToNextIoOperation = (long)(Math.random()*avgIoInterval);
 	}
 
+    public void addTimeSpentInRdyQue(long clock) {
+        timeSpentInReadyQueue += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+    }
 
-	public void setTimeOfLastEvent(long time){
-		timeOfLastEvent = time;
-	}
+    public void addTimeSpentWaitIo(long clock) {
+        timeSpentWaitingForIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+        }
 
-	// Add more methods as needed
+    public void addTimeSpentInIo(long clock) {
+        timeSpentInIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+    }
 }
