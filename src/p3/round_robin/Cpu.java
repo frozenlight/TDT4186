@@ -37,10 +37,7 @@ public class Cpu {
      */
     public Event insertProcess(Process p, long clock) {
         cpuQueue.addLast(p);
-        //System.out.println("Added " + p.getProcessId() + " to CPU queue");
-        //if CPU is idle
         if(activeProcess == null){
-            //System.out.println("CPU is idle, so we activate " + p.toString());
             return switchProcess(clock);
         }
         return null;
@@ -55,12 +52,13 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event switchProcess(long clock) {
+        if (activeProcess != null) {
+            activeProcess.addTimeSpentInCpu(clock);
+        }
         Event event;
 
         if(!cpuQueue.isEmpty()){
             activeProcess = cpuQueue.removeFirst();
-            System.out.println(activeProcess.getProcessId() + " is in CPU " + activeProcess.getCpuTimeNeededLeft() +
-                    " " + activeProcess.getTimeToNextIoOperation());
             event = getNextEvent(clock);
         }else{
             activeProcess = null;
@@ -71,7 +69,6 @@ public class Cpu {
         if((event.getType() == Event.SWITCH_PROCESS)){
             cpuQueue.addLast(activeProcess);
         }
-        activeProcess.updateStatistics(statistics);
         return event;
 
         // Incomplete
@@ -125,8 +122,8 @@ public class Cpu {
             eventType = Event.IO_REQUEST;
         }
 
-        statistics.totalTimeSpentInCpu += runTime;
-        statistics.totalBusyCpuTime += runTime;
+        //statistics.totalTimeSpentInCpu += runTime;
+        //statistics.totalBusyCpuTime += runTime;
         activeProcess.activate(runTime);
         return new Event(eventType, clock + runTime);
     }

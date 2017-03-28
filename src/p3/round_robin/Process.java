@@ -94,6 +94,7 @@ public class Process {
 
 		statistics.totalNofTimesInReadyQueue += nofTimesInReadyQueue;
 		statistics.totalNofTimesInIoQueue += nofTimesInIoQueue;
+		statistics.totalTimeSpentInCpu += timeSpentInCpu;
 	}
 
 	public long getProcessId() {
@@ -126,10 +127,29 @@ public class Process {
 		timeToNextIoOperation = (long)(Math.random()*avgIoInterval);
 	}
 
-
 	public void setTimeOfLastEvent(long time){
 		timeOfLastEvent = time;
 	}
 
+	public void addTimeSpentInRdyQue(long clock) {
+	    System.out.println(timeOfLastEvent);
+        timeSpentInReadyQueue += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+    }
+
+    public void addTimeSpentWaitIo(long clock) {
+        timeSpentWaitingForIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+    }
+
+    public void addTimeSpentInCpu(long clock) {
+	    timeSpentInCpu += clock - timeOfLastEvent;
+	    timeOfLastEvent = clock;
+    }
+
+    public void addTimeSpentInIo(long clock) {
+        timeSpentInIo += clock - timeOfLastEvent;
+        timeOfLastEvent = clock;
+    }
 	// Add more methods as needed
 }
