@@ -39,7 +39,7 @@ public class Cpu {
         if (activeProcess == null) {
             activeProcess = cpuQueue.getFirst();
         }
-        return new Event(1,clock);
+        return new Event(Event.NEW_PROCESS,clock);
     }
 
     /**
@@ -57,7 +57,7 @@ public class Cpu {
         if (!cpuQueue.isEmpty()) {
             activeProcess = cpuQueue.getFirst();
         }
-        return new Event(3,clock);
+        return new Event(Event.SWITCH_PROCESS,clock);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Cpu {
      */
     public Event activeProcessLeft(long clock) {
         this.switchProcess(clock);
-        return new Event(4,clock);
+        return new Event(Event.IO_REQUEST,clock);
     }
 
     /**
@@ -84,6 +84,7 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
+
         // Incomplete
     }
 
